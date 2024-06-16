@@ -88,7 +88,7 @@ X_test, y_test = test_df[cat_cols + num_cols], test_df[target]
 
 #%% Defining processors
 
-categorical_preprocessor = Pipeline(steps=[('encoder', OneHotEncoder())])
+categorical_preprocessor = Pipeline(steps=[('encoder', TargetEncoder())])
 
 numerical_preprocessor = Pipeline(steps=[('scaler', StandardScaler())])
 
@@ -100,31 +100,34 @@ preprocessor = ColumnTransformer(transformers=[
 
 args = dict()
 args['n_estimators'] = 100
-args['learning_rate'] = 0.03
-args['max_depth'] = 13
-args['colsample_bytree'] = 0.6
+args['learning_rate'] = 0.1
+args['max_depth'] = 7
+args['colsample_bytree'] = 0.8
 args['scale_pos_weight'] = 0.05
+args['reg_lambda'] = 2
 
-# model = Pipeline(steps=[('pre', preprocessor),
-#                         ('classifier', XGBClassifier(
-#                                 objective='binary:logistic',
-#                                 n_estimators=args['n_estimators'],
-#                                 learning_rate=args['learning_rate'],
-#                                 max_depth=args['max_depth'],
-#                                 colsample_bytree=args['colsample_bytree'],
-#                                 seed=42,
-#                                 scale_pos_weight=args['scale_pos_weight']
-#                                 )
-#                          )]
-#                  )
+
 model = Pipeline(steps=[('pre', preprocessor),
-                        ('classifier', TPOTClassifier(verbosity=2, 
-                                                      generations=4, 
-                                                      population_size=20, 
-                                                      random_state=42)
+                        ('classifier', XGBClassifier(
+                                objective='binary:logistic',
+                                n_estimators=args['n_estimators'],
+                                learning_rate=args['learning_rate'],
+                                max_depth=args['max_depth'],
+                                colsample_bytree=args['colsample_bytree'],
+                                seed=42,
+                                scale_pos_weight=args['scale_pos_weight'],
+                                reg_lambda = args['reg_lambda']
+                                )
                          )]
                  )
-
+# model = Pipeline(steps=[('pre', preprocessor),
+#                         ('classifier', TPOTClassifier(verbosity=2, 
+#                                                       generations=2, 
+#                                                       population_size=10, 
+#                                                       random_state=42)
+#                          )]
+#                  )
+2*
 model.fit(X_train, y_train)
 
 #%% Train Results
