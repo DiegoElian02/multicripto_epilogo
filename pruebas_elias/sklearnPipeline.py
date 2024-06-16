@@ -119,7 +119,7 @@ args['scale_pos_weight'] = 0.05
 #                  )
 model = Pipeline(steps=[('pre', preprocessor),
                         ('classifier', TPOTClassifier(verbosity=2, 
-                                                      generations=8, 
+                                                      generations=4, 
                                                       population_size=20, 
                                                       random_state=42)
                          )]
