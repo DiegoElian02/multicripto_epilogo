@@ -2,3 +2,7 @@
 *.venv
 Hack_Arca
 mlruns
+/venv
+/venv/
+*.parquet
+*.csv
